@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spotifyのアルゴリズムを解剖する——「おすすめ」に入るための条件2026年版 | YUGEN</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      line-height: 1.85;
+      -webkit-font-smoothing: antialiased;
+    }
+    .article-header {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 80px 24px 40px;
+    }
+    .article-header .category {
+      display: inline-block;
+      font-size: 0.75em;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #117a8b;
+      border: 1px solid #117a8b;
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+    .article-header .date {
+      font-size: 0.8em;
+      color: #888;
+      margin-bottom: 12px;
+    }
+    .article-header h1 {
+      font-size: 2em;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+    .article-header .tags {
+      font-size: 0.8em;
+      color: #666;
+    }
+    .article-body {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+    .article-body p {
+      font-size: 1em;
+      margin-bottom: 1.4em;
+      text-align: justify;
+    }
+    .article-body h2 {
+      font-weight: 700;
+      color: #1a1a1a;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 8px;
+      margin-bottom: 1em;
+    }
+    .article-body h3 {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.8em;
+    }
+    .article-body hr {
+      border: none;
+      border-top: 1px solid #e0e0e0;
+      margin: 2.5em 0;
+    }
+    .article-body ul, .article-body ol {
+      margin: 0 0 1.4em 1.5em;
+    }
+    .article-body li {
+      margin-bottom: 0.5em;
+      font-size: 1em;
+    }
+    .article-body figure {
+      margin: 2em 0;
+      text-align: center;
+    }
+    .article-body figure img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .article-body figcaption {
+      font-size: 0.8em;
+      color: #888;
+      margin-top: 8px;
+    }
+    .article-body a {
+      color: #117a8b;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .article-body a:hover {
+      opacity: 0.7;
+    }
+    .article-body strong {
+      font-weight: 600;
+    }
+    .article-body code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    @media (max-width: 600px) {
+      .article-header { padding: 40px 16px 24px; }
+      .article-header h1 { font-size: 1.5em; }
+      .article-body { padding: 0 16px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="article-header">
+  <span class="category">Tech × Trends</span>
+  <p class="date">April 14, 2026</p>
+  <h1>Spotifyのアルゴリズムを解剖する——「おすすめ」に入るための条件2026年版</h1>
+  <p class="tags">テクノロジー / データ分析 / ビジネス</p>
+</header>
+
+<article class="article-body">
+<p><strong>シリーズ</strong>: T（テクノロジー）</p>
+<hr />
+<p>毎週月曜日、Discover Weeklyが更新される。30曲、計2時間ほどの「あなただけのプレイリスト」。まるでDJが自分の音楽歴を完全に理解した上で選曲してくれたような、この体験を設計しているのがSpotifyのアルゴリズムだ。アーティストにとってはこのアルゴリズムに選ばれるかどうかが、インディーバンドとメインストリームの境界線を決定する。2026年現在のアルゴリズムを徹底解剖する。</p>
+<figure><img src="https://raw.githubusercontent.com/hidakayasunari-svg/tokyo-digger-assets/main/illustrations/T/T-04_illust_new_1.png" alt="T-04 infographic 1" loading="lazy" style="width:100%;border-radius:8px;margin:2em 0;" /><figcaption></figcaption></figure>
+<hr />
+<h2 style="margin-top:2.5em;font-size:1.5em;">3つのコアシステム</h2>
+<p>Spotifyのレコメンデーションエンジンは、3つの独立した技術が組み合わさって動いている。</p>
+<h3 style="margin-top:1.8em;font-size:1.2em;">1. 協調フィルタリング（Collaborative Filtering）</h3>
+<p>「同じ楽曲を聴いているユーザーは、他の楽曲の好みも似ている」という前提に基づく。あなたがBillie EilishとBon Iverを両方聴いているとすれば、同じ組み合わせを持つユーザーが好きな曲が候補に上がる仕組みだ。ユーザー数5億超のSpotifyは、このフィルタリングのための学習データの規模で他サービスを圧倒している。</p>
+<h3 style="margin-top:1.8em;font-size:1.2em;">2. 音声解析（Audio Analysis）</h3>
+<p>楽曲そのものを機械学習で解析し、テンポ・キー・エネルギー・ダンサビリティ・アコースティック度などのパラメータを数値化する。これによりアーティスト情報を知らなくても「似た音楽的特性を持つ楽曲」を推薦できる。インディーアーティストの新曲でも、音楽的に既存人気楽曲と類似していれば発見される可能性がある。</p>
+<h3 style="margin-top:1.8em;font-size:1.2em;">3. 自然言語処理（NLP）</h3>
+<p>ウェブ上のブログ・レビュー・ニュース記事を解析し、楽曲・アーティストが「どんな文脈で語られているか」を学習する。「ドライブ向き」「深夜に聴きたい」「フェスで盛り上がる」といった文化的文脈もアルゴリズムは取り込んでいる。</p>
+<figure><img src="https://raw.githubusercontent.com/hidakayasunari-svg/tokyo-digger-assets/main/illustrations/T/T-04_illust_new_2.png" alt="T-04 infographic 2" loading="lazy" style="width:100%;border-radius:8px;margin:2em 0;" /><figcaption></figcaption></figure>
+<hr />
+<h2 style="margin-top:2.5em;font-size:1.5em;">アルゴリズムが「評価する」5つの指標</h2>
+<p>Spotifyのアルゴリズムが重視する指標は、2024〜2026年にかけて大きく変化した。Chartlexが2,400超のアーティストキャンペーンデータを分析した調査によれば、現在のアルゴリズムは以下の指標を特に重視している。</p>
+<h3 style="margin-top:1.8em;font-size:1.2em;">保存率（Save Rate）</h3>
+<p>曲を最後まで聴いたユーザーのうち、「ライブラリに保存」した割合。<strong>20%以上が一つの目安</strong>とされ、この閾値を超えた楽曲がアルゴリズムに「これは価値ある楽曲だ」と判断される。</p>
+<h3 style="margin-top:1.8em;font-size:1.2em;">リピート比率（Stream-to-Listener Ratio）</h3>
+<p>月間リスナー数に対するストリーム数の比率。<strong>2.0以上</strong>が算法プレイリスト入りの一つの基準とされる。1人のリスナーが平均2回以上再生している状態が評価の高さを示す。</p>
+<h3 style="margin-top:1.8em;font-size:1.2em;">完聴率（Completion Rate）</h3>
+<p>曲が最後まで再生された割合。途中でスキップされた楽曲は評価が下がる。イントロの長い楽曲や「雰囲気だけ良くて飽きる楽曲」は、初期完聴率が低くなりやすい。</p>
+<h3 style="margin-top:1.8em;font-size:1.2em;">プレイリスト追加率</h3>
+<p>ユーザーが自分のプレイリストに追加した割合。これはアクティブな「気に入った」のサインとしてアルゴリズムが強く重視する。</p>
+<h3 style="margin-top:1.8em;font-size:1.2em;">スキップ率の低さ</h3>
+<p>逆指標として、スキップ率が低いほど評価が上がる。楽曲の30秒以内スキップはストリーミング数にもカウントされないため、プロデューサーたちは「最初の30秒で掴む」ことを強く意識している。</p>
+<hr />
+<h2 style="margin-top:2.5em;font-size:1.5em;">Release Radar・Discover Weekly・Editorial Playlistの違い</h2>
+<h3 style="margin-top:1.8em;font-size:1.2em;">Release Radar（リリースレーダー）</h3>
+<p><strong>最も活用しやすいアルゴリズムプレイリスト</strong>。毎週金曜に更新され、フォロワーがいるアーティストの新作が自動的に掲載される。条件はシンプルで、<strong>リリース前4週以内にSpotify for Artistsでピッチ（事前申請）を行うこと</strong>。フォロワーがゼロに近くても、申請するだけで既存フォロワーには届く。</p>
+<h3 style="margin-top:1.8em;font-size:1.2em;">Discover Weekly（ディスカバーウィークリー）</h3>
+<p>毎週月曜更新の「未知の音楽発見」プレイリスト。Release Radarより難易度が高く、アルゴリズムはリリース後1〜2週間のエンゲージメントデータを観察してから掲載を判断する。保存率・完聴率・プレイリスト追加率が特に重視される。</p>
+<h3 style="margin-top:1.8em;font-size:1.2em;">Editorial Playlist（エディトリアルプレイリスト）</h3>
+<p>「Today's Top Hits」「New Music Friday」など、Spotifyの編集チームが手動でキュレーションするプレイリスト。<strong>アルゴリズムとは別物</strong>であり、Spotify for Artistsの「Pitching」機能からリリース前に申請できる。採用されれば数百万のリスナーに届く可能性があるが、競争率は極めて高い。申請時には楽曲の雰囲気・アーティストのストーリー・プロモーション計画を具体的に記載することが採用率を上げる。</p>
+<hr />
+<h2 style="margin-top:2.5em;font-size:1.5em;">2024〜2026年のアルゴリズム変化——「発見より馴染み」へのシフト</h2>
+<p>2024〜2026年にかけて、Spotifyのアルゴリズムは<strong>「新しい音楽の発見」から「慣れ親しんだ音楽の維持」方向</strong>へとシフトした。</p>
+<p>AI DJやAutoplay、Artist Radioなどの機能が既知の楽曲を繰り返しサーフェスする傾向が強まり、Discover Weeklyも以前ほど「まったく知らないアーティスト」を積極的に推薦しなくなったという報告が増えている。この変化の背景には、リスナーの「離脱率削減」を優先するビジネス判断がある——新しい音楽は不確かなリスク、既知の音楽は確実なリテンションという考え方だ。</p>
+<p>一方、2025年12月にはユーザーが「自分でアルゴリズムを操作できる」<strong>Prompted Playlist機能</strong>をニュージーランドでテスト展開。テキストプロンプトで「深夜のドライブ向け、アップテンポ少なめ、インディーメイン」と入力するだけで専用プレイリストが生成される。2026年3月にはTaste Profileベータも開始され、AIパーソナライゼーションの透明化が進んでいる。</p>
+<hr />
+<h2 style="margin-top:2.5em;font-size:1.5em;">インディーアーティストがアルゴリズムを活用する実践戦略</h2>
+<p><strong>1. リリース前ピッチは絶対に行う</strong></p>
+<p>Spotify for ArtistsのPitching機能はEditorial Playlist申請の唯一の正規ルート。4週前が推奨。申請内容の質も採用率に影響する。</p>
+<p><strong>2. ファンコミュニティへの「保存促進」</strong></p>
+<p>SNSやライブで「Spotifyライブラリに保存してください」と明示的に呼びかける。ストリーム数より保存数を増やすことが、アルゴリズム評価に直結する。</p>
+<p><strong>3. リリース後1〜2週間に集中投下</strong></p>
+<p>アルゴリズムはリリース直後のエンゲージメントデータで楽曲の質を判断する。ファーストウィークに最大限の露出（ライブ・SNS投稿・プレイリスター連絡）を集中させる。</p>
+<p><strong>4. イントロを30秒以内に設計する</strong></p>
+<p>完聴率とスキップ率を意識したイントロの設計。現代の楽曲は「0〜30秒で聴き手を引き込む」ことが事実上の業界標準になっている。</p>
+<hr />
+<h2 style="margin-top:2.5em;font-size:1.5em;">Spotify以外のプラットフォームとの比較</h2>
+<p>| プラットフォーム | アルゴリズム特性 | インディー有利度 |</p>
+<p>|---|---|---|</p>
+<p>| <strong>Spotify</strong> | 保存率・完聴率重視。AI DJが普及。 | 中（競争激化） |</p>
+<p>| <strong>Apple Music</strong> | 編集チームの手動キュレーション比重が大きい。アルゴリズム非公開。 | 低〜中（人脈・PR重要） |</p>
+<p>| <strong>YouTube Music</strong> | YouTubeの視聴履歴を参照。動画コンテンツとの連動が強み。 | 中（動画制作コスト） |</p>
+<p>| <strong>Tidal</strong> | 高音質・アーティスト支持型。ユーザー数少ないがコア音楽ファン多い。 | 低（規模小） |</p>
+<p>Apple Musicは編集チームの判断が大きく、業界コネクションがないと入り口が狭い。YouTube Musicは動画コンテンツと連動するため、MV・リリックビデオなどの映像資産があるアーティストに有利だ。</p>
+<hr />
+<h2 style="margin-top:2.5em;font-size:1.5em;">まとめ</h2>
+<p>Spotifyのアルゴリズムに選ばれる鍵は、2026年現在「ストリーム数の多さ」ではなく「聴かれ方の質」にある。保存率・完聴率・繰り返し再生——これらはすべて「この音楽は本当に愛されているか」をアルゴリズムが測る指標だ。AIパーソナライゼーションが進むほど、「人の心を動かす音楽」が本質的な競争力になる——皮肉ではなく、それは一つの希望でもある。</p>
+<hr />
+<h2 style="margin-top:2.5em;font-size:1.3em;">参考データ</h2>
+<ul>
+  <li><a href="https://www.chartlex.com/blog/streaming/how-spotify-algorithm-works-2026-complete-guide" target="_blank" rel="noopener">How Spotify's Algorithm Works in 2026: Complete Guide - Chartlex</a></li>
+  <li><a href="https://newsroom.spotify.com/2025-12-10/spotify-prompted-playlists-algorithm-gustav-soderstrom/" target="_blank" rel="noopener">You're in Control: Spotify Lets You Steer the Algorithm - Spotify Newsroom</a></li>
+  <li><a href="https://chartlex.com/blogs/news/spotify-algorithm-breakthrough-how-to-trigger-algorithmic-playlists-in-2025-ultimate-guide" target="_blank" rel="noopener">Spotify Algorithm Breakthrough: How to Trigger Algorithmic Playlists in 2025 - Chartlex</a></li>
+  <li><a href="https://www.music-tomorrow.com/blog/how-to-get-on-discover-weekly-spotify-algorithm" target="_blank" rel="noopener">How the Discover Weekly Algorithm Works - Music Tomorrow</a></li>
+  <li><a href="https://newsroom.spotify.com/2026-03-13/taste-profile-beta-announcement/" target="_blank" rel="noopener">A New Era of Personalization: Shape Your Taste Profile on Spotify - Spotify Newsroom</a></li>
+  <li><a href="https://research.atspotify.com/2025/11/transforming-ai-research-into-personalized-listening-spotify-at-neurips-2025" target="_blank" rel="noopener">Transforming AI Research into Personalized Listening: Spotify at NeurIPS 2025 - Spotify Research</a></li>
+  <li><a href="https://techcrunch.com/2025/05/13/spotifys-ai-dj-now-lets-you-use-voice-commands-to-personalize-your-tunes/" target="_blank" rel="noopener">Spotify's AI DJ now lets you use voice commands - TechCrunch</a></li>
+  <li><a href="https://playlistpush.com/blog/the-spotify-algorithm/" target="_blank" rel="noopener">The Spotify Algorithm: How To Get On Release Radar - Playlist Push</a></li>
+</ul>
+</article>
+
+</body>
+</html>
