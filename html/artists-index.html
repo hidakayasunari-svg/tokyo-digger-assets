@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YUGEN — Artist Dictionary</title>
+  <style>
+    :root {
+      --accent: #5B8DE8;
+      --bg: #0a0a0a; --surface: #161616; --border: #2a2a2a;
+      --text: #f0f0f0; --text-secondary: #9a9a9a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Helvetica Neue', sans-serif; }
+    a { text-decoration: none; }
+
+    .topnav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,0.95); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 52px;
+    }
+    .topnav-brand { font-size: 18px; font-weight: 800; letter-spacing: 0.12em; color: var(--accent); }
+    .topnav-back { font-size: 13px; color: var(--text-secondary); }
+
+    .page-hero {
+      padding: 60px 24px 40px;
+      text-align: center;
+    }
+    .page-hero h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 900; letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .page-hero h1 span { color: var(--accent); }
+    .page-hero p {
+      font-size: 16px; color: var(--text-secondary);
+      max-width: 500px; margin: 0 auto;
+    }
+
+    .section-label {
+      padding: 20px 24px 12px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent);
+      max-width: 1100px; margin: 0 auto;
+    }
+
+    .artists-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+
+    .artist-index-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.15s;
+      color: var(--text);
+    }
+    .artist-index-card:hover {
+      border-color: var(--card-accent);
+      transform: translateY(-2px);
+    }
+    .card-banner {
+      height: 140px; position: relative;
+    }
+    .card-banner-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+    }
+    .card-banner-content {
+      position: absolute; bottom: 14px; left: 14px; right: 14px;
+    }
+    .card-type {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #ccc; margin-bottom: 4px;
+    }
+    .card-name {
+      font-size: 20px; font-weight: 900;
+    }
+    .card-body {
+      padding: 14px 16px;
+    }
+    .card-genre {
+      font-size: 11px; color: var(--card-accent);
+      font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .card-debut {
+      font-size: 11px; color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .card-tagline {
+      font-size: 12px; color: #aaa; line-height: 1.5;
+    }
+
+    footer {
+      text-align: center; padding: 40px; font-size: 12px;
+      color: #444; border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">YUGEN</span>
+  <a class="topnav-back" href="../index.html" style="color:#9a9a9a">← Articles</a>
+</nav>
+
+<div class="page-hero">
+  <h1>Artist <span>Dictionary</span></h1>
+  <p>Profiles of BMSG artists and emerging acts from around the world</p>
+</div>
+
+<div class="section-label">BMSG Artists — 11 Profiles</div>
+<div class="artists-grid">
+  
+<a href="befirst.html" class="artist-index-card" style="--card-accent: #5B8DE8">
+  <div class="card-banner" style="background-image: url("https://yt3.googleusercontent.com/zgwVwPoZRAxuuRc--vCt3J4vaLXi1rh5734ulPNMmFVZg3bfu5CWm64j2T4uPljb3ouACMbKIA=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"); background-size: cover; background-position: center;">
+    <div class="card-banner-overlay"></div>
+    <div class="card-banner-content">
+      <div class="card-type">Boy Group · 6 Members</div>
+      <div class="card-name">BE:FIRST</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-genre">J-Pop / R&amp;B</div>
+    <div class="card-debut">Debut: November 2021</div>
+    <div class="card-tagline">Japan&#x27;s No.1 Streaming Boy Group</div>
+  </div>
+</a>
+<a href="mazzel.html" class="artist-index-card" style="--card-accent: #00C8FF">
+  <div class="card-banner" style="background-image: url("https://yt3.googleusercontent.com/80KgqRyF9EeV4xReHGA7K5ynLaPrm3c9TfZF2CJ8c0wqxfIQbRQNBd2mEaJFFs92i075y7fkWQ=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"); background-size: cover; background-position: center;">
+    <div class="card-banner-overlay"></div>
+    <div class="card-banner-content">
+      <div class="card-type">Boy Group · 8 Members</div>
+      <div class="card-name">MAZZEL</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-genre">J-Pop / Dance</div>
+    <div class="card-debut">Debut: May 17, 2023</div>
+    <div class="card-tagline">BMSG&#x27;s Dance Powerhouse — 8-Member All-Rounder Group</div>
+  </div>
+</a>
+<a href="hana.html" class="artist-index-card" style="--card-accent: #FF69B4">
+  <div class="card-banner" style="background-image: url("https://yt3.googleusercontent.com/lryvsU4AR22ZKyaQMXYf5ah3tnoW81L_2sSueS5wggL0dwImtM541nwqNM_q5pUzNKnoRyhKUA=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"); background-size: cover; background-position: center;">
+    <div class="card-banner-overlay"></div>
+    <div class="card-banner-content">
+      <div class="card-type">Girl Group · 7 Members</div>
+      <div class="card-name">HANA</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-genre">J-Pop / Pop</div>
+    <div class="card-debut">Debut: April 2, 2025</div>
+    <div class="card-tagline">BMSG&#x27;s Next-Generation Girl Group — Japan Record Award Best …</div>
+  </div>
+</a>
+<a href="starglow.html" class="artist-index-card" style="--card-accent: #B39DFF">
+  <div class="card-banner" style="background-image: url("https://yt3.googleusercontent.com/vpaMV7N8fowRhLMrso1-GyA_G9e7Cif_6H0VQSiLvIOdk1xhyHHCKj7cMtLl91WfOuoV4Dpq=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"); background-size: cover; background-position: center;">
+    <div class="card-banner-overlay"></div>
+    <div class="card-banner-content">
+      <div class="card-type">Boy Group · 5 Members</div>
+      <div class="card-name">STARGLOW</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-genre">J-Pop / Dance</div>
+    <div class="card-debut">Debut: January 21, 2026</div>
+    <div class="card-tagline">BMSG&#x27;s Newest Boy Group — Debuted Jan 2026</div>
+  </div>
+</a>
+<a href="skyhi.html" class="artist-index-card" style="--card-accent: #5B8DE8">
+  <div class="card-banner" style="background-image: url("https://yt3.googleusercontent.com/k5t0qliJptuNlBXV8XpA5RrVPmR6i0Y3B2w62xAiEkvza0CPQINfKiyvJRVzL-dcW0ba8Wv_9w=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"); background-size: cover; background-position: center;">
+    <div class="card-banner-overlay"></div>
+    <div class="card-banner-content">
+      <div class="card-type">Solo Artist</div>
+      <div class="card-name">SKY-HI</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-genre">Hip-Hop / R&amp;B</div>
+    <div class="card-debut">Debut: August 2013 (Solo Major Debut)</div>
+    <div class="card-tagline">BMSG CEO &amp; Founder · Japan&#x27;s Premier Hip-Hop Auteur</div>
+  </div>
+</a>
+<a href="novelcore.html" class="artist-index-card" style="--card-accent: #FF456E">
+  <div class="card-banner" style="background-image: url("https://yt3.googleusercontent.com/mHVnOf5ppuqi2kQPyo2HXe5XVN_3jhHHLmq0TwsDHRDDAEtWwoD_K74FF4lwDPEsY6bS8psNGw=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"); background-size: cover; background-position: center;">
+    <div class="card-banner-overlay"></div>
+    <div class="card-banner-content">
+      <div class="card-type">Solo Artist</div>
+      <div class="card-name">Novel Core</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-genre">Hip-Hop / Rap</div>
+    <div class="card-debut">Debut: 2020 (BMSG)</div>
+    <div class="card-tagline">BMSG&#x27;s Dark Prince of Hip-Hop — Lyrical Depth Meets Raw Emot…</div>
+  </div>
+</a>
+<a href="ailetheshota.html" class="artist-index-card" style="--card-accent: #FF8C42">
+  <div class="card-banner" style="background-image: url("https://yt3.googleusercontent.com/EEznJo2Py3LwBVEBEVGoo9kNKN2eDAVM7UJHTugiZrLYCEcO6Ds7v9136FkWxR3NgDyAFadX=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"); background-size: cover; background-position: center;">
+    <div class="card-banner-overlay"></div>
+    <div class="card-banner-content">
+      <div class="card-type">Solo Artist</div>
+      <div class="card-name">Aile The Shota</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-genre">R&amp;B / City Pop</div>
+    <div class="card-debut">Debut: January 2022</div>
+    <div class="card-tagline">BMSG&#x27;s R&amp;B Virtuoso — Sophisticated Sound, Global Sensibilit…</div>
+  </div>
+</a>
+<a href="reiko.html" class="artist-index-card" style="--card-accent: #3ED5B7">
+  <div class="card-banner" style="background-image: url("https://yt3.googleusercontent.com/2c2hBt6C92wUj2UiDEl7OzxkXHyuVkLt2-y87Vz6k1gvMPAowfbXwMpT4J64e_bGP8bavuo2=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"); background-size: cover; background-position: center;">
+    <div class="card-banner-overlay"></div>
+    <div class="card-banner-content">
+      <div class="card-type">Solo Artist</div>
+      <div class="card-name">REIKO</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-genre">J-Pop / Pop</div>
+    <div class="card-debut">Debut: 2022 (BMSG)</div>
+    <div class="card-tagline">BMSG&#x27;s Rising Female Voice — Authentic Pop Storytelling</div>
+  </div>
+</a>
+<a href="fumino.html" class="artist-index-card" style="--card-accent: #C5F73A">
+  <div class="card-banner" style="background-image: url("https://yt3.googleusercontent.com/h5G8n1aZii8LUQExszb-izSgRDxTc2FGCAUYY-7s0ofA1Av4oH-6aUSonoprYSCuW82MPY_y-A=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"); background-size: cover; background-position: center;">
+    <div class="card-banner-overlay"></div>
+    <div class="card-banner-content">
+      <div class="card-type">Solo Artist</div>
+      <div class="card-name">ふみの</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-genre">J-Pop / Pop</div>
+    <div class="card-debut">Debut: 2023 (BMSG)</div>
+    <div class="card-tagline">BMSG&#x27;s Emerging Pop Voice — Heartfelt Expression</div>
+  </div>
+</a>
+<a href="edhiiiboi.html" class="artist-index-card" style="--card-accent: #5BC8FF">
+  <div class="card-banner" style="background-image: url("https://yt3.googleusercontent.com/0OK-mWHkqg8WZ_5laYA4GCsWhV4tFKo5VbzZZKN-wZjayY4dquCZYejj9z6nHyzBqXPYgGNsPac=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"); background-size: cover; background-position: center;">
+    <div class="card-banner-overlay"></div>
+    <div class="card-banner-content">
+      <div class="card-type">Solo Artist</div>
+      <div class="card-name">edhiii boi</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-genre">Hip-Hop / Rap</div>
+    <div class="card-debut">Debut: 2021 (BMSG)</div>
+    <div class="card-tagline">BMSG&#x27;s Youngest Solo Rapper — Viral Energy, Gen Z Voice</div>
+  </div>
+</a>
+<a href="ayumuimazu.html" class="artist-index-card" style="--card-accent: #F0C040">
+  <div class="card-banner" style="background-image: url("https://yt3.googleusercontent.com/cSKe-QmF3QnnixmdD8lWhVsGEnq0lYb66jIxZoZYDo-zK0G-g5OWZv8ukPBJM0eq0Ap7aOPk3a4=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"); background-size: cover; background-position: center;">
+    <div class="card-banner-overlay"></div>
+    <div class="card-banner-content">
+      <div class="card-type">Solo Artist</div>
+      <div class="card-name">Ayumu Imazu</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-genre">J-Pop / R&amp;B</div>
+    <div class="card-debut">Debut: 2022 (BMSG)</div>
+    <div class="card-tagline">BMSG&#x27;s Global-Ready Pop Artist — Japanese Authenticity, Inte…</div>
+  </div>
+</a>
+</div>
+
+<footer>
+  <p><a href="../index.html" style="color:#666">YUGEN</a> — Music Media by BMSG New Media Division</p>
+</footer>
+
+</body>
+</html>
