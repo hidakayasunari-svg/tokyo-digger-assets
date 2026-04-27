@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YUGEN — Artist Dictionary</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0a0a0a;
+      font-family: 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', Arial, sans-serif;
+      color: #fff;
+    }
+
+    /* ── Gallery (scroll container) ── */
+    .gallery {
+      width: 100%;
+      height: 100dvh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .gallery::-webkit-scrollbar { display: none; }
+    .gallery { scrollbar-width: none; }
+
+    /* ── Panel ── */
+    .panel {
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 100dvh;
+      scroll-snap-align: start;
+      overflow: hidden;
+      text-decoration: none;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* Dark gradient overlay */
+    .panel-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(0,0,0,0.08) 0%,
+        rgba(0,0,0,0.30) 40%,
+        rgba(0,0,0,0.70) 70%,
+        rgba(0,0,0,0.88) 100%
+      );
+      transition: background 0.3s;
+    }
+    .panel:hover .panel-overlay {
+      background: linear-gradient(
+        160deg,
+        rgba(0,0,0,0.15) 0%,
+        rgba(0,0,0,0.38) 40%,
+        rgba(0,0,0,0.75) 70%,
+        rgba(0,0,0,0.92) 100%
+      );
+    }
+
+    /* ── Top bar (YUGEN brand + counter) ── */
+    .panel-topbar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 40px;
+      z-index: 10;
+    }
+    .panel-brand {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      opacity: 0.9;
+    }
+    .panel-counter {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      opacity: 0.6;
+    }
+
+    /* ── Main content (bottom-left) ── */
+    .panel-content {
+      position: absolute;
+      bottom: 80px;
+      left: 0; right: 0;
+      padding: 0 56px;
+      z-index: 10;
+    }
+    .panel-type {
+      font-size: clamp(10px, 1.2vw, 12px);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--panel-accent);
+      margin-bottom: 10px;
+    }
+    .panel-name {
+      font-size: clamp(44px, 9vw, 96px);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 0.95;
+      margin-bottom: 16px;
+      text-shadow: 0 4px 32px rgba(0,0,0,0.6);
+    }
+    .panel-genre {
+      font-size: clamp(11px, 1.4vw, 13px);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 10px;
+    }
+    .panel-tagline {
+      font-size: clamp(13px, 1.6vw, 16px);
+      line-height: 1.6;
+      color: rgba(255,255,255,0.75);
+      max-width: 520px;
+      margin-bottom: 28px;
+    }
+    .panel-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: clamp(12px, 1.3vw, 14px);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--panel-accent);
+      border: 1.5px solid var(--panel-accent);
+      padding: 10px 22px;
+      border-radius: 2px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .panel:hover .panel-cta {
+      background: var(--panel-accent);
+      color: #000;
+    }
+    .panel-arrow {
+      transition: transform 0.2s;
+    }
+    .panel:hover .panel-arrow {
+      transform: translateX(4px);
+    }
+
+    /* ── Scroll hint ── */
+    .panel-scroll-hint {
+      position: absolute;
+      bottom: 28px;
+      right: 40px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      z-index: 10;
+    }
+
+    /* ── Dot navigation (right side) ── */
+    .dot-nav {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.25);
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .dot.active {
+      background: #fff;
+      transform: scale(1.4);
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 640px) {
+      .panel-topbar { padding: 20px 24px; }
+      .panel-content { bottom: 60px; padding: 0 24px; }
+      .panel-tagline { display: none; }
+      .panel-scroll-hint { right: 24px; bottom: 20px; }
+      .dot-nav { right: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="dot-nav" id="dotNav">
+  <button class="dot" data-idx="1" aria-label="BE:FIRST"></button>
+<button class="dot" data-idx="2" aria-label="MAZZEL"></button>
+<button class="dot" data-idx="3" aria-label="HANA"></button>
+<button class="dot" data-idx="4" aria-label="STARGLOW"></button>
+<button class="dot" data-idx="5" aria-label="SKY-HI"></button>
+<button class="dot" data-idx="6" aria-label="Novel Core"></button>
+<button class="dot" data-idx="7" aria-label="Aile The Shota"></button>
+<button class="dot" data-idx="8" aria-label="REIKO"></button>
+<button class="dot" data-idx="9" aria-label="ふみの"></button>
+<button class="dot" data-idx="10" aria-label="edhiii boi"></button>
+<button class="dot" data-idx="11" aria-label="Ayumu Imazu"></button>
+
+</nav>
+
+<div class="gallery" id="gallery">
+
+<a class="panel" id="panel-1" href="befirst.html"
+   style="--panel-accent:#5B8DE8; background-image:url("https://yt3.googleusercontent.com/zgwVwPoZRAxuuRc--vCt3J4vaLXi1rh5734ulPNMmFVZg3bfu5CWm64j2T4uPljb3ouACMbKIA=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");background-size:cover;background-position:center top;">
+  <div class="panel-overlay"></div>
+
+  <div class="panel-topbar">
+    <span class="panel-brand">YUGEN</span>
+    <span class="panel-counter">01 / 11</span>
+  </div>
+
+  <div class="panel-content">
+    <div class="panel-type">Boy Group · 6 Members</div>
+    <h2 class="panel-name">BE:FIRST</h2>
+    <div class="panel-genre">J-Pop / R&amp;B</div>
+    <p class="panel-tagline">Japan&#x27;s No.1 Streaming Boy Group</p>
+    <div class="panel-cta">View Profile <span class="panel-arrow">→</span></div>
+  </div>
+
+  <div class="panel-scroll-hint">↓ Scroll</div>
+</a>
+<a class="panel" id="panel-2" href="mazzel.html"
+   style="--panel-accent:#00C8FF; background-image:url("https://yt3.googleusercontent.com/80KgqRyF9EeV4xReHGA7K5ynLaPrm3c9TfZF2CJ8c0wqxfIQbRQNBd2mEaJFFs92i075y7fkWQ=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");background-size:cover;background-position:center top;">
+  <div class="panel-overlay"></div>
+
+  <div class="panel-topbar">
+    <span class="panel-brand">YUGEN</span>
+    <span class="panel-counter">02 / 11</span>
+  </div>
+
+  <div class="panel-content">
+    <div class="panel-type">Boy Group · 8 Members</div>
+    <h2 class="panel-name">MAZZEL</h2>
+    <div class="panel-genre">J-Pop / Dance</div>
+    <p class="panel-tagline">BMSG&#x27;s Dance Powerhouse — 8-Member All-Rounder Group</p>
+    <div class="panel-cta">View Profile <span class="panel-arrow">→</span></div>
+  </div>
+
+  <div class="panel-scroll-hint">↓ Scroll</div>
+</a>
+<a class="panel" id="panel-3" href="hana.html"
+   style="--panel-accent:#FF69B4; background-image:url("https://yt3.googleusercontent.com/lryvsU4AR22ZKyaQMXYf5ah3tnoW81L_2sSueS5wggL0dwImtM541nwqNM_q5pUzNKnoRyhKUA=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");background-size:cover;background-position:center top;">
+  <div class="panel-overlay"></div>
+
+  <div class="panel-topbar">
+    <span class="panel-brand">YUGEN</span>
+    <span class="panel-counter">03 / 11</span>
+  </div>
+
+  <div class="panel-content">
+    <div class="panel-type">Girl Group · 7 Members</div>
+    <h2 class="panel-name">HANA</h2>
+    <div class="panel-genre">J-Pop / Pop</div>
+    <p class="panel-tagline">BMSG&#x27;s Next-Generation Girl Group — Japan Record Award Best New Artist 2025</p>
+    <div class="panel-cta">View Profile <span class="panel-arrow">→</span></div>
+  </div>
+
+  <div class="panel-scroll-hint">↓ Scroll</div>
+</a>
+<a class="panel" id="panel-4" href="starglow.html"
+   style="--panel-accent:#B39DFF; background-image:url("https://yt3.googleusercontent.com/vpaMV7N8fowRhLMrso1-GyA_G9e7Cif_6H0VQSiLvIOdk1xhyHHCKj7cMtLl91WfOuoV4Dpq=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");background-size:cover;background-position:center top;">
+  <div class="panel-overlay"></div>
+
+  <div class="panel-topbar">
+    <span class="panel-brand">YUGEN</span>
+    <span class="panel-counter">04 / 11</span>
+  </div>
+
+  <div class="panel-content">
+    <div class="panel-type">Boy Group · 5 Members</div>
+    <h2 class="panel-name">STARGLOW</h2>
+    <div class="panel-genre">J-Pop / Dance</div>
+    <p class="panel-tagline">BMSG&#x27;s Newest Boy Group — Debuted Jan 2026</p>
+    <div class="panel-cta">View Profile <span class="panel-arrow">→</span></div>
+  </div>
+
+  <div class="panel-scroll-hint">↓ Scroll</div>
+</a>
+<a class="panel" id="panel-5" href="skyhi.html"
+   style="--panel-accent:#5B8DE8; background-image:url("https://yt3.googleusercontent.com/k5t0qliJptuNlBXV8XpA5RrVPmR6i0Y3B2w62xAiEkvza0CPQINfKiyvJRVzL-dcW0ba8Wv_9w=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");background-size:cover;background-position:center top;">
+  <div class="panel-overlay"></div>
+
+  <div class="panel-topbar">
+    <span class="panel-brand">YUGEN</span>
+    <span class="panel-counter">05 / 11</span>
+  </div>
+
+  <div class="panel-content">
+    <div class="panel-type">Solo Artist</div>
+    <h2 class="panel-name">SKY-HI</h2>
+    <div class="panel-genre">Hip-Hop / R&amp;B</div>
+    <p class="panel-tagline">BMSG CEO &amp; Founder · Japan&#x27;s Premier Hip-Hop Auteur</p>
+    <div class="panel-cta">View Profile <span class="panel-arrow">→</span></div>
+  </div>
+
+  <div class="panel-scroll-hint">↓ Scroll</div>
+</a>
+<a class="panel" id="panel-6" href="novelcore.html"
+   style="--panel-accent:#FF456E; background-image:url("https://yt3.googleusercontent.com/mHVnOf5ppuqi2kQPyo2HXe5XVN_3jhHHLmq0TwsDHRDDAEtWwoD_K74FF4lwDPEsY6bS8psNGw=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");background-size:cover;background-position:center top;">
+  <div class="panel-overlay"></div>
+
+  <div class="panel-topbar">
+    <span class="panel-brand">YUGEN</span>
+    <span class="panel-counter">06 / 11</span>
+  </div>
+
+  <div class="panel-content">
+    <div class="panel-type">Solo Artist</div>
+    <h2 class="panel-name">Novel Core</h2>
+    <div class="panel-genre">Hip-Hop / Rap</div>
+    <p class="panel-tagline">BMSG&#x27;s Dark Prince of Hip-Hop — Lyrical Depth Meets Raw Emotion</p>
+    <div class="panel-cta">View Profile <span class="panel-arrow">→</span></div>
+  </div>
+
+  <div class="panel-scroll-hint">↓ Scroll</div>
+</a>
+<a class="panel" id="panel-7" href="ailetheshota.html"
+   style="--panel-accent:#FF8C42; background-image:url("https://yt3.googleusercontent.com/EEznJo2Py3LwBVEBEVGoo9kNKN2eDAVM7UJHTugiZrLYCEcO6Ds7v9136FkWxR3NgDyAFadX=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");background-size:cover;background-position:center top;">
+  <div class="panel-overlay"></div>
+
+  <div class="panel-topbar">
+    <span class="panel-brand">YUGEN</span>
+    <span class="panel-counter">07 / 11</span>
+  </div>
+
+  <div class="panel-content">
+    <div class="panel-type">Solo Artist</div>
+    <h2 class="panel-name">Aile The Shota</h2>
+    <div class="panel-genre">R&amp;B / City Pop</div>
+    <p class="panel-tagline">BMSG&#x27;s R&amp;B Virtuoso — Sophisticated Sound, Global Sensibility</p>
+    <div class="panel-cta">View Profile <span class="panel-arrow">→</span></div>
+  </div>
+
+  <div class="panel-scroll-hint">↓ Scroll</div>
+</a>
+<a class="panel" id="panel-8" href="reiko.html"
+   style="--panel-accent:#3ED5B7; background-image:url("https://yt3.googleusercontent.com/2c2hBt6C92wUj2UiDEl7OzxkXHyuVkLt2-y87Vz6k1gvMPAowfbXwMpT4J64e_bGP8bavuo2=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");background-size:cover;background-position:center top;">
+  <div class="panel-overlay"></div>
+
+  <div class="panel-topbar">
+    <span class="panel-brand">YUGEN</span>
+    <span class="panel-counter">08 / 11</span>
+  </div>
+
+  <div class="panel-content">
+    <div class="panel-type">Solo Artist</div>
+    <h2 class="panel-name">REIKO</h2>
+    <div class="panel-genre">J-Pop / Pop</div>
+    <p class="panel-tagline">BMSG&#x27;s Rising Female Voice — Authentic Pop Storytelling</p>
+    <div class="panel-cta">View Profile <span class="panel-arrow">→</span></div>
+  </div>
+
+  <div class="panel-scroll-hint">↓ Scroll</div>
+</a>
+<a class="panel" id="panel-9" href="fumino.html"
+   style="--panel-accent:#C5F73A; background-image:url("https://yt3.googleusercontent.com/h5G8n1aZii8LUQExszb-izSgRDxTc2FGCAUYY-7s0ofA1Av4oH-6aUSonoprYSCuW82MPY_y-A=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");background-size:cover;background-position:center top;">
+  <div class="panel-overlay"></div>
+
+  <div class="panel-topbar">
+    <span class="panel-brand">YUGEN</span>
+    <span class="panel-counter">09 / 11</span>
+  </div>
+
+  <div class="panel-content">
+    <div class="panel-type">Solo Artist</div>
+    <h2 class="panel-name">ふみの</h2>
+    <div class="panel-genre">J-Pop / Pop</div>
+    <p class="panel-tagline">BMSG&#x27;s Emerging Pop Voice — Heartfelt Expression</p>
+    <div class="panel-cta">View Profile <span class="panel-arrow">→</span></div>
+  </div>
+
+  <div class="panel-scroll-hint">↓ Scroll</div>
+</a>
+<a class="panel" id="panel-10" href="edhiiiboi.html"
+   style="--panel-accent:#5BC8FF; background-image:url("https://yt3.googleusercontent.com/0OK-mWHkqg8WZ_5laYA4GCsWhV4tFKo5VbzZZKN-wZjayY4dquCZYejj9z6nHyzBqXPYgGNsPac=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");background-size:cover;background-position:center top;">
+  <div class="panel-overlay"></div>
+
+  <div class="panel-topbar">
+    <span class="panel-brand">YUGEN</span>
+    <span class="panel-counter">10 / 11</span>
+  </div>
+
+  <div class="panel-content">
+    <div class="panel-type">Solo Artist</div>
+    <h2 class="panel-name">edhiii boi</h2>
+    <div class="panel-genre">Hip-Hop / Rap</div>
+    <p class="panel-tagline">BMSG&#x27;s Youngest Solo Rapper — Viral Energy, Gen Z Voice</p>
+    <div class="panel-cta">View Profile <span class="panel-arrow">→</span></div>
+  </div>
+
+  <div class="panel-scroll-hint">↓ Scroll</div>
+</a>
+<a class="panel" id="panel-11" href="ayumuimazu.html"
+   style="--panel-accent:#F0C040; background-image:url("https://yt3.googleusercontent.com/cSKe-QmF3QnnixmdD8lWhVsGEnq0lYb66jIxZoZYDo-zK0G-g5OWZv8ukPBJM0eq0Ap7aOPk3a4=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");background-size:cover;background-position:center top;">
+  <div class="panel-overlay"></div>
+
+  <div class="panel-topbar">
+    <span class="panel-brand">YUGEN</span>
+    <span class="panel-counter">11 / 11</span>
+  </div>
+
+  <div class="panel-content">
+    <div class="panel-type">Solo Artist</div>
+    <h2 class="panel-name">Ayumu Imazu</h2>
+    <div class="panel-genre">J-Pop / R&amp;B</div>
+    <p class="panel-tagline">BMSG&#x27;s Global-Ready Pop Artist — Japanese Authenticity, International Stage</p>
+    <div class="panel-cta">View Profile <span class="panel-arrow">→</span></div>
+  </div>
+
+  <div class="panel-scroll-hint">↑ Top</div>
+</a>
+</div>
+
+<script>
+(function() {
+  var gallery = document.getElementById('gallery');
+  var panels  = document.querySelectorAll('.panel');
+  var dots    = document.querySelectorAll('.dot');
+  var total   = panels.length;
+
+  function setActive(idx) {
+    dots.forEach(function(d, i) {
+      d.classList.toggle('active', i === idx);
+    });
+  }
+
+  // Dot click → scroll to panel
+  dots.forEach(function(dot, i) {
+    dot.addEventListener('click', function(e) {
+      e.preventDefault();
+      panels[i].scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // IntersectionObserver for active dot
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var idx = Array.from(panels).indexOf(entry.target);
+        setActive(idx);
+      }
+    });
+  }, { root: gallery, threshold: 0.5 });
+
+  panels.forEach(function(p) { observer.observe(p); });
+
+  // Prevent link navigation when user is just dragging/scrolling
+  var startY = 0;
+  panels.forEach(function(panel) {
+    panel.addEventListener('touchstart', function(e) {
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    panel.addEventListener('touchend', function(e) {
+      var dy = Math.abs(e.changedTouches[0].clientY - startY);
+      if (dy > 10) e.preventDefault();
+    });
+    panel.addEventListener('mousedown', function(e) {
+      startY = e.clientY;
+    });
+    panel.addEventListener('click', function(e) {
+      var dy = Math.abs(e.clientY - startY);
+      if (dy > 6) e.preventDefault();
+    });
+  });
+
+  setActive(0);
+})();
+</script>
+
+</body>
+</html>
