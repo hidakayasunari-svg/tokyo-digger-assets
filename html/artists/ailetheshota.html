@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aile The Shota — YUGEN Artist</title>
+  <style>
+    :root {
+      --accent: #FF8C42;
+      --bg: #0a0a0a;
+      --surface: #161616;
+      --surface2: #1e1e1e;
+      --border: #2a2a2a;
+      --text: #f0f0f0;
+      --text-secondary: #9a9a9a;
+      --text-dim: #555;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Nav ── */
+    .topnav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,0.95); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 52px;
+    }
+    .topnav-brand {
+      font-size: 18px; font-weight: 800; letter-spacing: 0.12em;
+      color: var(--accent);
+    }
+    .topnav-back {
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .topnav-back:hover { color: var(--text); }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      height: 480px;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+    .hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(10,10,10,0.1) 0%,
+        rgba(10,10,10,0.5) 50%,
+        rgba(10,10,10,0.92) 90%,
+        var(--bg) 100%);
+    }
+    .hero-content {
+      position: absolute; bottom: 36px; left: 0; right: 0;
+      padding: 0 40px;
+    }
+    .artist-type-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #000;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 3px;
+      margin-bottom: 12px;
+    }
+    .artist-name {
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+    }
+    .artist-positioning {
+      font-size: 16px;
+      color: #ccc;
+      margin-bottom: 14px;
+    }
+    .artist-meta {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .meta-tag {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; color: #bbb;
+    }
+    .meta-tag .flag { margin-right: 4px; }
+
+    /* ── Container ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Stats ── */
+    .stats-section {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+    .stat-label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .stat-value {
+      font-size: 14px; line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    /* ── Section base ── */
+    .section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .section:last-child { border-bottom: none; }
+    .section-title {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    /* ── About ── */
+    .about-text {
+      font-size: 15px; line-height: 1.8;
+      color: #d0d0d0; max-width: 760px;
+    }
+    .genre-tags {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 16px;
+    }
+    .genre-tag {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      padding: 4px 14px; border-radius: 20px;
+      font-size: 12px; color: var(--text-secondary);
+    }
+    .latest-release {
+      margin-top: 16px; padding: 14px 18px;
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .latest-release strong { color: var(--text); }
+
+    /* ── Members ── */
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .member-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex; gap: 0;
+    }
+    .member-photo {
+      width: 90px; min-height: 90px;
+      object-fit: cover; flex-shrink: 0;
+      background: var(--surface2);
+    }
+    .member-photo-placeholder {
+      width: 90px; min-height: 90px;
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; flex-shrink: 0;
+    }
+    .member-info {
+      padding: 14px 16px; flex: 1;
+    }
+    .member-name {
+      font-size: 15px; font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .member-position {
+      font-size: 11px; color: var(--accent);
+      font-weight: 600; letter-spacing: 0.05em;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .member-bio {
+      font-size: 12px; color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ── Discography ── */
+    .disco-list { list-style: none; }
+    .disco-item {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .disco-item:last-child { border-bottom: none; }
+    .disco-num {
+      font-size: 12px; color: var(--text-dim);
+      min-width: 24px; padding-top: 2px;
+    }
+    .disco-title {
+      font-size: 15px; font-weight: 600;
+    }
+    .disco-detail {
+      font-size: 12px; color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* ── Milestones ── */
+    .milestones-list { list-style: none; position: relative; }
+    .milestones-list::before {
+      content: ''; position: absolute;
+      left: 52px; top: 8px; bottom: 8px;
+      width: 1px; background: var(--border);
+    }
+    .milestone-item {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 10px 0;
+    }
+    .milestone-year {
+      min-width: 52px; text-align: right;
+      font-size: 12px; font-weight: 700;
+      color: var(--accent); padding-top: 2px;
+    }
+    .milestone-dot {
+      position: relative; z-index: 1;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+      margin-top: 7px;
+    }
+    .milestone-text {
+      font-size: 14px; color: var(--text-secondary);
+      flex: 1;
+    }
+
+    /* ── Related Articles ── */
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .article-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      transition: border-color 0.2s;
+    }
+    .article-card:hover {
+      border-color: var(--accent);
+      text-decoration: none;
+    }
+    .article-card-title {
+      font-size: 14px; font-weight: 600;
+      color: var(--text); line-height: 1.5;
+    }
+    .article-card-label {
+      font-size: 11px; color: var(--accent);
+      margin-bottom: 6px;
+      text-transform: uppercase; font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 40px 0;
+      text-align: center;
+      font-size: 12px; color: var(--text-dim);
+      border-top: 1px solid var(--border);
+    }
+    .footer a { color: var(--text-secondary); }
+
+    @media (max-width: 640px) {
+      .hero { height: 360px; }
+      .hero-content { padding: 0 20px; bottom: 24px; }
+      .container { padding: 0 16px; }
+      .members-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">YUGEN</span>
+  <a class="topnav-back" href="../artists-index.html">← Artist Dictionary</a>
+</nav>
+
+<div class="hero" style="background-image: url("https://yt3.googleusercontent.com/EEznJo2Py3LwBVEBEVGoo9kNKN2eDAVM7UJHTugiZrLYCEcO6Ds7v9136FkWxR3NgDyAFadX=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");">
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <div>
+      <span class="artist-type-badge">Solo Artist</span>
+    </div>
+    <h1 class="artist-name">Aile The Shota</h1>
+    <p class="artist-positioning">BMSG&#x27;s R&amp;B Virtuoso — Sophisticated Sound, Global Sensibility</p>
+    <div class="artist-meta">
+      <span class="meta-tag"><span class="flag">🇯🇵</span>Japan</span>
+      <span class="meta-tag">Debut: January 2022</span>
+      
+      <span class="meta-tag">BMSG / Bullmoose Records</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+
+<section class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Spotify</div><div class="stat-value">Strong Streaming Numbers
+(J-R&amp;B / Soul Genre)</div></div>
+<div class="stat-card"><div class="stat-label">Apple Music</div><div class="stat-value">Available — R&amp;B · Soul</div></div>
+<div class="stat-card"><div class="stat-label">YouTube</div><div class="stat-value">YouTube Presence · R&amp;B MV releases</div></div>
+<div class="stat-card"><div class="stat-label">Instagram</div><div class="stat-value">Active Instagram · Artist community</div></div>
+<div class="stat-card"><div class="stat-label">TikTok</div><div class="stat-value">TikTok · Growing engagement</div></div>
+<div class="stat-card"><div class="stat-label">X</div><div class="stat-value">X (Twitter) · Fan updates</div></div>
+
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="section-title">Chart Performance</div>
+  <p class="about-text">Charting on Billboard Japan. Oneman tour 2026.</p>
+</section>
+
+
+<section class="section">
+  <div class="section-title">About</div>
+  <p class="about-text">Aile The Shota (real name: Watanabe Shota, born Mar 15, 1998, Tokyo) brings a rare R&amp;B sensibility shaped by global influences. He participated in THE FIRST audition before signing with BMSG as a solo artist. His artist name was announced at a SKY-HI concert in September 2021. His vocal style — warm, conversational, technically sophisticated — draws from city pop and soul traditions while remaining distinctly modern. Albums &#x27;REAL POP&#x27; (Nov 2024) and &#x27;REAL POP2&#x27; (Feb 2026) establish him as a consistent album artist. He hosts &#x27;Aile The Shota no LOVERADIO&#x27; on 文化放送 since March 2026.</p>
+  <div class="genre-tags"><span class="genre-tag">R&amp;B</span><span class="genre-tag">City Pop</span><span class="genre-tag">Soul</span></div>
+  <div class="latest-release"><strong>Latest Release</strong> — REAL POP2 (Album · Feb 18, 2026)</div>
+</section>
+
+
+<section class="section">
+  <div class="section-title">Discography</div>
+  <ul class="disco-list">
+    
+<li class="disco-item">
+  <span class="disco-num">01</span>
+  <div>
+    <div class="disco-title">AURORA TOKIO</div>
+    <div class="disco-detail">Digital Single · Jan 2022 · Major debut</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">02</span>
+  <div>
+    <div class="disco-title">AINNOCENCE</div>
+    <div class="disco-detail">EP · 2022</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">03</span>
+  <div>
+    <div class="disco-title">LOVEGO</div>
+    <div class="disco-detail">EP · 2023</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">04</span>
+  <div>
+    <div class="disco-title">omen</div>
+    <div class="disco-detail">EP · 2024</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">05</span>
+  <div>
+    <div class="disco-title">踊りませんか?</div>
+    <div class="disco-detail">Digital Single · Jul 2024</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">06</span>
+  <div>
+    <div class="disco-title">REAL POP</div>
+    <div class="disco-detail">Album · Nov 20, 2024 · 11 tracks</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">07</span>
+  <div>
+    <div class="disco-title">ハナユキ</div>
+    <div class="disco-detail">Digital Single · 2025</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">08</span>
+  <div>
+    <div class="disco-title">REAL POP2</div>
+    <div class="disco-detail">Album · Feb 18, 2026 · 11 tracks</div>
+  </div>
+</li>
+  </ul>
+</section>
+
+
+<section class="section">
+  <div class="section-title">Key Milestones</div>
+  <ul class="milestones-list">
+    
+<li class="milestone-item">
+  <span class="milestone-year">Sep 2021</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">Artist name announced at SKY-HI concert</span>
+</li>
+<li class="milestone-item">
+  <span class="milestone-year">Jan 2022</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">Major debut — &#x27;AURORA TOKIO&#x27;</span>
+</li>
+<li class="milestone-item">
+  <span class="milestone-year">Jul 2024</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">Label transfer to Bullmoose Records (BMSG subsidiary)</span>
+</li>
+<li class="milestone-item">
+  <span class="milestone-year">Nov 2024</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">&#x27;REAL POP&#x27; album — R&amp;B statement</span>
+</li>
+<li class="milestone-item">
+  <span class="milestone-year">Feb 2026</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">&#x27;REAL POP2&#x27; album · Oneman tour Mar–May 2026</span>
+</li>
+<li class="milestone-item">
+  <span class="milestone-year">Mar 2026</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">Radio host: &#x27;Aile The Shota no LOVERADIO&#x27; (文化放送)</span>
+</li>
+  </ul>
+</section>
+
+
+<section class="section">
+  <div class="section-title">Related Articles</div>
+  <div class="articles-grid">
+    
+<a class="article-card" href="../T-02.html">
+  <div class="article-card-label">YUGEN Article</div>
+  <div class="article-card-title">アニメ主題歌が世界で最強な理由——YOASOBI・Eve・King Gnuが証明した勝ち筋</div>
+</a>
+  </div>
+</section>
+
+
+</div><!-- /container -->
+
+<footer class="footer">
+  <div class="container">
+    <p><a href="../index.html">YUGEN</a> — Music Media by BMSG New Media Division</p>
+    <p style="margin-top:6px">© 2026 YUGEN / BMSG Inc. All data from public sources.</p>
+  </div>
+</footer>
+
+</body>
+</html>

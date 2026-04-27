@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Novel Core — YUGEN Artist</title>
+  <style>
+    :root {
+      --accent: #FF456E;
+      --bg: #0a0a0a;
+      --surface: #161616;
+      --surface2: #1e1e1e;
+      --border: #2a2a2a;
+      --text: #f0f0f0;
+      --text-secondary: #9a9a9a;
+      --text-dim: #555;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Nav ── */
+    .topnav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,0.95); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 52px;
+    }
+    .topnav-brand {
+      font-size: 18px; font-weight: 800; letter-spacing: 0.12em;
+      color: var(--accent);
+    }
+    .topnav-back {
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .topnav-back:hover { color: var(--text); }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      height: 480px;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+    .hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(10,10,10,0.1) 0%,
+        rgba(10,10,10,0.5) 50%,
+        rgba(10,10,10,0.92) 90%,
+        var(--bg) 100%);
+    }
+    .hero-content {
+      position: absolute; bottom: 36px; left: 0; right: 0;
+      padding: 0 40px;
+    }
+    .artist-type-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #000;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 3px;
+      margin-bottom: 12px;
+    }
+    .artist-name {
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+    }
+    .artist-positioning {
+      font-size: 16px;
+      color: #ccc;
+      margin-bottom: 14px;
+    }
+    .artist-meta {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .meta-tag {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; color: #bbb;
+    }
+    .meta-tag .flag { margin-right: 4px; }
+
+    /* ── Container ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Stats ── */
+    .stats-section {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+    .stat-label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .stat-value {
+      font-size: 14px; line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    /* ── Section base ── */
+    .section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .section:last-child { border-bottom: none; }
+    .section-title {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    /* ── About ── */
+    .about-text {
+      font-size: 15px; line-height: 1.8;
+      color: #d0d0d0; max-width: 760px;
+    }
+    .genre-tags {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 16px;
+    }
+    .genre-tag {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      padding: 4px 14px; border-radius: 20px;
+      font-size: 12px; color: var(--text-secondary);
+    }
+    .latest-release {
+      margin-top: 16px; padding: 14px 18px;
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .latest-release strong { color: var(--text); }
+
+    /* ── Members ── */
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .member-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex; gap: 0;
+    }
+    .member-photo {
+      width: 90px; min-height: 90px;
+      object-fit: cover; flex-shrink: 0;
+      background: var(--surface2);
+    }
+    .member-photo-placeholder {
+      width: 90px; min-height: 90px;
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; flex-shrink: 0;
+    }
+    .member-info {
+      padding: 14px 16px; flex: 1;
+    }
+    .member-name {
+      font-size: 15px; font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .member-position {
+      font-size: 11px; color: var(--accent);
+      font-weight: 600; letter-spacing: 0.05em;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .member-bio {
+      font-size: 12px; color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ── Discography ── */
+    .disco-list { list-style: none; }
+    .disco-item {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .disco-item:last-child { border-bottom: none; }
+    .disco-num {
+      font-size: 12px; color: var(--text-dim);
+      min-width: 24px; padding-top: 2px;
+    }
+    .disco-title {
+      font-size: 15px; font-weight: 600;
+    }
+    .disco-detail {
+      font-size: 12px; color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* ── Milestones ── */
+    .milestones-list { list-style: none; position: relative; }
+    .milestones-list::before {
+      content: ''; position: absolute;
+      left: 52px; top: 8px; bottom: 8px;
+      width: 1px; background: var(--border);
+    }
+    .milestone-item {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 10px 0;
+    }
+    .milestone-year {
+      min-width: 52px; text-align: right;
+      font-size: 12px; font-weight: 700;
+      color: var(--accent); padding-top: 2px;
+    }
+    .milestone-dot {
+      position: relative; z-index: 1;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+      margin-top: 7px;
+    }
+    .milestone-text {
+      font-size: 14px; color: var(--text-secondary);
+      flex: 1;
+    }
+
+    /* ── Related Articles ── */
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .article-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      transition: border-color 0.2s;
+    }
+    .article-card:hover {
+      border-color: var(--accent);
+      text-decoration: none;
+    }
+    .article-card-title {
+      font-size: 14px; font-weight: 600;
+      color: var(--text); line-height: 1.5;
+    }
+    .article-card-label {
+      font-size: 11px; color: var(--accent);
+      margin-bottom: 6px;
+      text-transform: uppercase; font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 40px 0;
+      text-align: center;
+      font-size: 12px; color: var(--text-dim);
+      border-top: 1px solid var(--border);
+    }
+    .footer a { color: var(--text-secondary); }
+
+    @media (max-width: 640px) {
+      .hero { height: 360px; }
+      .hero-content { padding: 0 20px; bottom: 24px; }
+      .container { padding: 0 16px; }
+      .members-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">YUGEN</span>
+  <a class="topnav-back" href="../artists-index.html">← Artist Dictionary</a>
+</nav>
+
+<div class="hero" style="background-image: url("https://yt3.googleusercontent.com/mHVnOf5ppuqi2kQPyo2HXe5XVN_3jhHHLmq0TwsDHRDDAEtWwoD_K74FF4lwDPEsY6bS8psNGw=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj");">
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <div>
+      <span class="artist-type-badge">Solo Artist</span>
+    </div>
+    <h1 class="artist-name">Novel Core</h1>
+    <p class="artist-positioning">BMSG&#x27;s Dark Prince of Hip-Hop — Lyrical Depth Meets Raw Emotion</p>
+    <div class="artist-meta">
+      <span class="meta-tag"><span class="flag">🇯🇵</span>Japan</span>
+      <span class="meta-tag">Debut: 2020 (BMSG)</span>
+      
+      <span class="meta-tag">BMSG (Be My Stage &amp; Grow)</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+
+<section class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Spotify</div><div class="stat-value">Strong Streaming Numbers
+(J-Hip-Hop / Alternative)</div></div>
+<div class="stat-card"><div class="stat-label">Apple Music</div><div class="stat-value">Available — Hip-Hop · Alternative</div></div>
+<div class="stat-card"><div class="stat-label">YouTube</div><div class="stat-value">Active YouTube Channel</div></div>
+<div class="stat-card"><div class="stat-label">Instagram</div><div class="stat-value">CORE HOUSE Community</div></div>
+<div class="stat-card"><div class="stat-label">TikTok</div><div class="stat-value">Growing TikTok Presence</div></div>
+<div class="stat-card"><div class="stat-label">X</div><div class="stat-value">Active Fanbase</div></div>
+
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="section-title">Chart Performance</div>
+  <p class="about-text">Multiple Billboard Japan HOT100 entries. FC &#x27;CORE HOUSE&#x27; — Dedicated hip-hop fanbase.</p>
+</section>
+
+
+<section class="section">
+  <div class="section-title">About</div>
+  <p class="about-text">Novel Core (real name: Satake Taro, born Jan 18, 2001, Tokyo) occupies a singular position in Japan&#x27;s hip-hop landscape. He won the BAZOOKA!!! High School RAP Championship in 2017 and signed with BMSG in 2020. His music confronts themes of identity, loss, alienation, and resilience with lyrical sophistication far beyond typical J-Pop. His debut arena concert at K-Arena Yokohama (Feb 11, 2025, capacity 20,000) marked a major milestone in his career trajectory.</p>
+  <div class="genre-tags"><span class="genre-tag">Hip-Hop</span><span class="genre-tag">Rap</span><span class="genre-tag">Alternative</span></div>
+  <div class="latest-release"><strong>Latest Release</strong> — BABiES AGAiN EP (Aug 6, 2025)</div>
+</section>
+
+
+<section class="section">
+  <div class="section-title">Discography</div>
+  <ul class="disco-list">
+    
+<li class="disco-item">
+  <span class="disco-num">01</span>
+  <div>
+    <div class="disco-title">WCMTW</div>
+    <div class="disco-detail">Album · Apr 1, 2020 · Independent · 15 tracks</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">02</span>
+  <div>
+    <div class="disco-title">A GREAT FOOL</div>
+    <div class="disco-detail">Album · Dec 15, 2021 · Major debut</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">03</span>
+  <div>
+    <div class="disco-title">No Pressure</div>
+    <div class="disco-detail">Album · Aug 3, 2022</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">04</span>
+  <div>
+    <div class="disco-title">HERO</div>
+    <div class="disco-detail">Album · Jan 18, 2024</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">05</span>
+  <div>
+    <div class="disco-title">2024 TAPE</div>
+    <div class="disco-detail">Album · Feb 11, 2025 · K-Arena debut day</div>
+  </div>
+</li>
+<li class="disco-item">
+  <span class="disco-num">06</span>
+  <div>
+    <div class="disco-title">BABiES AGAiN</div>
+    <div class="disco-detail">EP · Aug 6, 2025 · 4 tracks</div>
+  </div>
+</li>
+  </ul>
+</section>
+
+
+<section class="section">
+  <div class="section-title">Key Milestones</div>
+  <ul class="milestones-list">
+    
+<li class="milestone-item">
+  <span class="milestone-year">2017</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">BAZOOKA!!! High School RAP Championship winner</span>
+</li>
+<li class="milestone-item">
+  <span class="milestone-year">2020</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">Signed with BMSG — independent debut &#x27;WCMTW&#x27; (15 tracks)</span>
+</li>
+<li class="milestone-item">
+  <span class="milestone-year">2021</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">Major debut &#x27;A GREAT FOOL&#x27; — critical acclaim</span>
+</li>
+<li class="milestone-item">
+  <span class="milestone-year">2024</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">&#x27;HERO&#x27; album — consistent artistic output</span>
+</li>
+<li class="milestone-item">
+  <span class="milestone-year">Feb 2025</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">Arena debut at K-Arena Yokohama (20,000 capacity)</span>
+</li>
+<li class="milestone-item">
+  <span class="milestone-year">Aug 2025</span>
+  <span class="milestone-dot"></span>
+  <span class="milestone-text">&#x27;BABiES AGAiN&#x27; EP — continued momentum</span>
+</li>
+  </ul>
+</section>
+
+
+</div><!-- /container -->
+
+<footer class="footer">
+  <div class="container">
+    <p><a href="../index.html">YUGEN</a> — Music Media by BMSG New Media Division</p>
+    <p style="margin-top:6px">© 2026 YUGEN / BMSG Inc. All data from public sources.</p>
+  </div>
+</footer>
+
+</body>
+</html>
