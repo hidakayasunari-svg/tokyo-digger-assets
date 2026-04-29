@@ -38,26 +38,99 @@
       text-decoration: none;
       color: #fff;
       cursor: pointer;
+      background: #0a0a0a;
     }
 
-    /* Dark gradient overlay - 下方向グラデで写真上部を見せる */
+    /* 写真レイヤー: パネル本体から少し内側に配置して "貼った感" を消す */
+    .panel-photo {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      z-index: 1;
+      transition: transform 0.6s ease-out, filter 0.4s;
+    }
+    .panel:hover .panel-photo {
+      transform: scale(1.03);
+    }
+
+    /* アーティストアクセントカラーの軽いティント */
+    .panel-tint {
+      position: absolute;
+      inset: 0;
+      background: var(--panel-accent);
+      mix-blend-mode: soft-light;
+      opacity: 0.4;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* 上端フェード: 前のパネルから滑らかに繋がる "つなぎ" */
+    .panel-edge-fade-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 18vh;
+      background: linear-gradient(to bottom,
+        rgba(10,10,10,0.95) 0%,
+        rgba(10,10,10,0.55) 50%,
+        rgba(10,10,10,0.0) 100%);
+      z-index: 6;
+      pointer-events: none;
+    }
+
+    /* 下端フェード: 次のパネルへ滑らかに繋がる */
+    .panel-edge-fade-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 22vh;
+      background: linear-gradient(to top,
+        rgba(10,10,10,0.95) 0%,
+        rgba(10,10,10,0.55) 50%,
+        rgba(10,10,10,0.0) 100%);
+      z-index: 6;
+      pointer-events: none;
+    }
+
+    /* メインダークオーバーレイ: テキスト周辺だけ濃く */
     .panel-overlay {
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(to bottom,
-          rgba(0,0,0,0.0) 0%,
-          rgba(0,0,0,0.0) 35%,
-          rgba(0,0,0,0.35) 60%,
-          rgba(0,0,0,0.85) 100%),
-        linear-gradient(to right,
-          rgba(0,0,0,0.55) 0%,
+        linear-gradient(to top right,
+          rgba(0,0,0,0.5) 0%,
           rgba(0,0,0,0.15) 40%,
           rgba(0,0,0,0.0) 70%);
-      transition: opacity 0.3s;
+      z-index: 5;
+      pointer-events: none;
     }
-    .panel:hover .panel-overlay {
-      opacity: 0.92;
+
+    /* 巨大背景番号: デザイン要素として写真に溶け込む */
+    .panel-bignum {
+      position: absolute;
+      bottom: -4vh;
+      right: 2vw;
+      font-size: clamp(180px, 32vw, 520px);
+      font-weight: 100;
+      line-height: 0.85;
+      color: var(--panel-accent);
+      opacity: 0.10;
+      z-index: 4;
+      pointer-events: none;
+      font-family: 'Helvetica Neue', sans-serif;
+      letter-spacing: -0.05em;
+    }
+
+    /* 左端アクセントライン: 構造的なデザイン要素 */
+    .panel-accent-line {
+      position: absolute;
+      left: 0;
+      top: 30%;
+      bottom: 30%;
+      width: 2px;
+      background: var(--panel-accent);
+      opacity: 0.7;
+      z-index: 8;
     }
 
     /* ── Top bar (YUGEN brand + counter) ── */
@@ -67,8 +140,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 24px 40px;
-      z-index: 10;
+      padding: 28px 44px;
+      z-index: 12;
     }
     .panel-brand {
       font-size: 15px;
@@ -89,7 +162,7 @@
       bottom: 80px;
       left: 0; right: 0;
       padding: 0 56px;
-      z-index: 10;
+      z-index: 12;
     }
     .panel-type {
       font-size: clamp(10px, 1.2vw, 12px);
@@ -151,13 +224,13 @@
     .panel-scroll-hint {
       position: absolute;
       bottom: 28px;
-      right: 40px;
+      right: 44px;
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.35);
-      z-index: 10;
+      color: rgba(255,255,255,0.4);
+      z-index: 12;
     }
 
     /* ── Dot navigation (right side) ── */
@@ -216,8 +289,13 @@
 <div class="gallery" id="gallery">
 
 <a class="panel" id="panel-1" href="befirst.html"
-   style="--panel-accent:#5B8DE8; background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/befirst.jpg');background-size:cover;background-position:center top;">
+   style="--panel-accent:#5B8DE8;">
+  <div class="panel-photo" style="background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/befirst.jpg');"></div><div class="panel-tint"></div>
+  <div class="panel-edge-fade-top"></div>
+  <div class="panel-edge-fade-bottom"></div>
   <div class="panel-overlay"></div>
+  <div class="panel-bignum">01</div>
+  <div class="panel-accent-line"></div>
 
   <div class="panel-topbar">
     <span class="panel-brand">YUGEN</span>
@@ -235,8 +313,13 @@
   <div class="panel-scroll-hint">↓ Scroll</div>
 </a>
 <a class="panel" id="panel-2" href="mazzel.html"
-   style="--panel-accent:#00C8FF; background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/mazzel.jpg');background-size:cover;background-position:center top;">
+   style="--panel-accent:#00C8FF;">
+  <div class="panel-photo" style="background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/mazzel.jpg');"></div><div class="panel-tint"></div>
+  <div class="panel-edge-fade-top"></div>
+  <div class="panel-edge-fade-bottom"></div>
   <div class="panel-overlay"></div>
+  <div class="panel-bignum">02</div>
+  <div class="panel-accent-line"></div>
 
   <div class="panel-topbar">
     <span class="panel-brand">YUGEN</span>
@@ -254,8 +337,13 @@
   <div class="panel-scroll-hint">↓ Scroll</div>
 </a>
 <a class="panel" id="panel-3" href="hana.html"
-   style="--panel-accent:#FF69B4; background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/hana.jpg');background-size:cover;background-position:center top;">
+   style="--panel-accent:#FF69B4;">
+  <div class="panel-photo" style="background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/hana.jpg');"></div><div class="panel-tint"></div>
+  <div class="panel-edge-fade-top"></div>
+  <div class="panel-edge-fade-bottom"></div>
   <div class="panel-overlay"></div>
+  <div class="panel-bignum">03</div>
+  <div class="panel-accent-line"></div>
 
   <div class="panel-topbar">
     <span class="panel-brand">YUGEN</span>
@@ -273,8 +361,13 @@
   <div class="panel-scroll-hint">↓ Scroll</div>
 </a>
 <a class="panel" id="panel-4" href="starglow.html"
-   style="--panel-accent:#B39DFF; background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/starglow.jpg');background-size:cover;background-position:center top;">
+   style="--panel-accent:#B39DFF;">
+  <div class="panel-photo" style="background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/starglow.jpg');"></div><div class="panel-tint"></div>
+  <div class="panel-edge-fade-top"></div>
+  <div class="panel-edge-fade-bottom"></div>
   <div class="panel-overlay"></div>
+  <div class="panel-bignum">04</div>
+  <div class="panel-accent-line"></div>
 
   <div class="panel-topbar">
     <span class="panel-brand">YUGEN</span>
@@ -292,8 +385,13 @@
   <div class="panel-scroll-hint">↓ Scroll</div>
 </a>
 <a class="panel" id="panel-5" href="skyhi.html"
-   style="--panel-accent:#5B8DE8; background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/skyhi.jpg');background-size:cover;background-position:center top;">
+   style="--panel-accent:#5B8DE8;">
+  <div class="panel-photo" style="background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/skyhi.jpg');"></div><div class="panel-tint"></div>
+  <div class="panel-edge-fade-top"></div>
+  <div class="panel-edge-fade-bottom"></div>
   <div class="panel-overlay"></div>
+  <div class="panel-bignum">05</div>
+  <div class="panel-accent-line"></div>
 
   <div class="panel-topbar">
     <span class="panel-brand">YUGEN</span>
@@ -311,8 +409,13 @@
   <div class="panel-scroll-hint">↓ Scroll</div>
 </a>
 <a class="panel" id="panel-6" href="novelcore.html"
-   style="--panel-accent:#FF456E; background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/novelcore.jpg');background-size:cover;background-position:center top;">
+   style="--panel-accent:#FF456E;">
+  <div class="panel-photo" style="background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/novelcore.jpg');"></div><div class="panel-tint"></div>
+  <div class="panel-edge-fade-top"></div>
+  <div class="panel-edge-fade-bottom"></div>
   <div class="panel-overlay"></div>
+  <div class="panel-bignum">06</div>
+  <div class="panel-accent-line"></div>
 
   <div class="panel-topbar">
     <span class="panel-brand">YUGEN</span>
@@ -330,8 +433,13 @@
   <div class="panel-scroll-hint">↓ Scroll</div>
 </a>
 <a class="panel" id="panel-7" href="ailetheshota.html"
-   style="--panel-accent:#FF8C42; background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/ailetheshota.jpg');background-size:cover;background-position:center top;">
+   style="--panel-accent:#FF8C42;">
+  <div class="panel-photo" style="background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/ailetheshota.jpg');"></div><div class="panel-tint"></div>
+  <div class="panel-edge-fade-top"></div>
+  <div class="panel-edge-fade-bottom"></div>
   <div class="panel-overlay"></div>
+  <div class="panel-bignum">07</div>
+  <div class="panel-accent-line"></div>
 
   <div class="panel-topbar">
     <span class="panel-brand">YUGEN</span>
@@ -349,8 +457,13 @@
   <div class="panel-scroll-hint">↓ Scroll</div>
 </a>
 <a class="panel" id="panel-8" href="reiko.html"
-   style="--panel-accent:#3ED5B7; background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/reiko.jpg');background-size:cover;background-position:center top;">
+   style="--panel-accent:#3ED5B7;">
+  <div class="panel-photo" style="background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/reiko.jpg');"></div><div class="panel-tint"></div>
+  <div class="panel-edge-fade-top"></div>
+  <div class="panel-edge-fade-bottom"></div>
   <div class="panel-overlay"></div>
+  <div class="panel-bignum">08</div>
+  <div class="panel-accent-line"></div>
 
   <div class="panel-topbar">
     <span class="panel-brand">YUGEN</span>
@@ -368,8 +481,13 @@
   <div class="panel-scroll-hint">↓ Scroll</div>
 </a>
 <a class="panel" id="panel-9" href="fumino.html"
-   style="--panel-accent:#C5F73A; background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/fumino.jpg');background-size:cover;background-position:center top;">
+   style="--panel-accent:#C5F73A;">
+  <div class="panel-photo" style="background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/fumino.jpg');"></div><div class="panel-tint"></div>
+  <div class="panel-edge-fade-top"></div>
+  <div class="panel-edge-fade-bottom"></div>
   <div class="panel-overlay"></div>
+  <div class="panel-bignum">09</div>
+  <div class="panel-accent-line"></div>
 
   <div class="panel-topbar">
     <span class="panel-brand">YUGEN</span>
@@ -387,8 +505,13 @@
   <div class="panel-scroll-hint">↓ Scroll</div>
 </a>
 <a class="panel" id="panel-10" href="edhiiiboi.html"
-   style="--panel-accent:#5BC8FF; background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/edhiiiboi.jpg');background-size:cover;background-position:center top;">
+   style="--panel-accent:#5BC8FF;">
+  <div class="panel-photo" style="background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/edhiiiboi.jpg');"></div><div class="panel-tint"></div>
+  <div class="panel-edge-fade-top"></div>
+  <div class="panel-edge-fade-bottom"></div>
   <div class="panel-overlay"></div>
+  <div class="panel-bignum">10</div>
+  <div class="panel-accent-line"></div>
 
   <div class="panel-topbar">
     <span class="panel-brand">YUGEN</span>
@@ -406,8 +529,13 @@
   <div class="panel-scroll-hint">↓ Scroll</div>
 </a>
 <a class="panel" id="panel-11" href="ayumuimazu.html"
-   style="--panel-accent:#F0C040; background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/ayumuimazu.jpg');background-size:cover;background-position:center top;">
+   style="--panel-accent:#F0C040;">
+  <div class="panel-photo" style="background-image:url('https://hidakayasunari-svg.github.io/tokyo-digger-assets/html/artist-photos/ayumuimazu.jpg');"></div><div class="panel-tint"></div>
+  <div class="panel-edge-fade-top"></div>
+  <div class="panel-edge-fade-bottom"></div>
   <div class="panel-overlay"></div>
+  <div class="panel-bignum">11</div>
+  <div class="panel-accent-line"></div>
 
   <div class="panel-topbar">
     <span class="panel-brand">YUGEN</span>
